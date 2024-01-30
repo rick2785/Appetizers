@@ -15,11 +15,27 @@ struct AppetizerListView: View {
             NavigationView {
                 List(viewModel.appetizers) { appetizer in
                     AppetizerListCell(appetizer: appetizer)
+//                        .listRowSeparator(.hidden)
+//                        .listRowSeparatorTint(.brandPrimary)
+                        .onTapGesture {
+                            viewModel.selectedAppetizer = appetizer
+                            viewModel.isShowingDetail = true
+                        }
                 }
                 .navigationTitle("🍟 Appetizers")
+                .listStyle(.plain)
+                .disabled(viewModel.isShowingDetail)
             }
-            .onAppear {
+//            .onAppear {
+//                viewModel.getAppetizers()
+//            }
+            .task {
                 viewModel.getAppetizers()
+            }
+            .blur(radius: viewModel.isShowingDetail ? 20 : 0)
+            
+            if viewModel.isShowingDetail {
+                AppetizerDetailView(appetizer: viewModel.selectedAppetizer!, isShowingDetail: $viewModel.isShowingDetail)
             }
             
             if viewModel.isLoading {
